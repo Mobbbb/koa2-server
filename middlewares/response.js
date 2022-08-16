@@ -2,11 +2,38 @@
 
 const failCode = [404]
 
+/**
+ * @param {*} status 
+ * @param {*} msg 
+ * @param {*} result 
+ * @param {*} success 
+ * @param {*} verify 字段校验
+ * @param {*} updateResult 增删改结果返回
+ */
 // 这个middleware用于将ctx.result中的内容最终回传给客户端
 const responseHandler = async (ctx) => {
+    if (ctx.verify) { // 字段校验
+        const msgList = []
+        Object.keys(ctx.verify).forEach(key => {
+            if (!ctx.verify[key]) {
+                ctx.success = false
+                msgList.push(`${key} doesn't exist`)
+            }
+        })
+        if (msgList.length) {
+            ctx.message = msgList.join(',')
+        }
+    }
+    
+    if (ctx.updateResult) { // 增删改结果返回
+		const { affectedRows, message } = ctx.updateResult
+		if (!affectedRows) {
+			ctx.success = false
+			ctx.msg = message
+		}
+    }
+
     let status = ctx.status
-    // ctx.body status将会返回404
-    if (ctx.body) status = 200
     ctx.body = {
         code: status,
         msg: ctx.msg || ctx.message || '',
