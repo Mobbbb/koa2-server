@@ -1,6 +1,21 @@
 ### koa2-server
 后端服务基础框架
 
+## Project setup
+```
+npm install
+```
+
+### for development
+```
+npm run start / npm run dev
+```
+
+### for production
+```
+npm run prd / pm2 start bin/www
+```
+
 ### 目录结构
 
 ```
