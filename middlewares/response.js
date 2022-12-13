@@ -15,7 +15,7 @@ const responseHandler = async (ctx) => {
     if (ctx.verify) { // 字段校验
         const msgList = []
         Object.keys(ctx.verify).forEach(key => {
-            if (!ctx.verify[key]) {
+            if (!ctx.verify[key] && ctx.verify[key] !== 0) {
                 ctx.success = false
                 msgList.push(`${key} doesn't exist`)
             }
