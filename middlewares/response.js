@@ -3,7 +3,8 @@
 const failCode = [404]
 
 /**
- * @param {*} status 
+ * @param {*} status 200、500、403...
+ * @param {*} code 
  * @param {*} msg 
  * @param {*} result 
  * @param {*} success 
@@ -33,9 +34,10 @@ const responseHandler = async (ctx) => {
 		}
     }
 
-    let status = ctx.status
+    const status = ctx.status
+    const code = ctx.code || status
     ctx.body = {
-        code: status,
+        code,
         msg: ctx.msg || ctx.message || '',
         data: ctx.result || [],
         success: typeof ctx.success !== 'undefined' ? ctx.success : !failCode.includes(status),

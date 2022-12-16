@@ -10,6 +10,7 @@ module.exports = function(ctx, next) {
         jwt.verify(token, config.secret, (error, decoded) => {
             if (error) {
                 ctx.jwtData = null
+                ctx.code = 403
                 ctx.success = false
                 ctx.msg = error.message
             } else {
