@@ -1,5 +1,6 @@
 const createToken = require('./token-libs')
 const expiresTime = require('../config').expiresTime
+const tokenName = require('../config').tokenName
 
 function getExpiresTime(num) { 
     let date1 = new Date()
@@ -64,7 +65,7 @@ function setCookies(params, ctx) {
     const domain = origin ? ctx.request.header.origin.split(':')[1].slice(2) : ''
     const { uid, password } = params
     const token = createToken({ uid, password })
-    ctx.cookies.set('token', token, {
+    ctx.cookies.set(tokenName, token, {
         domain,
         path: '/', // cookie写入的路径
         maxAge: 1000 * 60 * 60 * 1 * expiresTime,
