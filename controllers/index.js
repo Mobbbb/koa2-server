@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const verify = require('../utils/libs').verify
 
 const files = fs.readdirSync(__dirname).filter(file => file !== 'index.js')
 
@@ -18,7 +19,7 @@ for (const file of files) {
 						if (ctx.jwtData === null) { // jwt验证失败，不进入router
 							next()
 						} else { // jwt验证成功的 或 不需要token的接口
-							await controller[key](ctx, next)
+							await controller[key](ctx, next, verify)
 						}
 					}
 				})

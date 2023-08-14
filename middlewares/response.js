@@ -13,19 +13,6 @@ const failCode = [404]
  */
 // 这个middleware用于将ctx.result中的内容最终回传给客户端
 const responseHandler = async (ctx) => {
-    if (ctx.verify) { // 字段校验
-        const msgList = []
-        Object.keys(ctx.verify).forEach(key => {
-            if (!ctx.verify[key] && ctx.verify[key] !== 0) {
-                ctx.success = false
-                msgList.push(`${key} doesn't exist`)
-            }
-        })
-        if (msgList.length) {
-            ctx.message = msgList.join(',')
-        }
-    }
-    
     if (ctx.updateResult) { // 增删改结果返回
 		const { affectedRows, message } = ctx.updateResult
 		if (!affectedRows) {

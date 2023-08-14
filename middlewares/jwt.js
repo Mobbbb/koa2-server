@@ -5,7 +5,7 @@ const config = require('../config')
 
 module.exports = function(ctx, next) {
     // 将 token 中的数据解密后存到 ctx 中
-    let token = ctx.cookies.get(config.tokenName)
+    let token = ctx.cookies.get(`${config.cookiesPref}-token`)
     if (token){
         jwt.verify(token, config.secret, (error, decoded) => {
             if (error) {

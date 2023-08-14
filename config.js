@@ -3,7 +3,7 @@ const config = {
     publicDir: __dirname + '/public',
     secret: 'secret',
     expiresTime: 720, // token过期时间，单位: 小时
-    tokenName: 'token',
+    cookiesPref: 'token',
     mysql: {
         user: 'user',
         password: 'password',

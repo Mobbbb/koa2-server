@@ -1,6 +1,6 @@
 const createToken = require('./token-libs')
-const expiresTime = require('../config').expiresTime
-const tokenName = require('../config').tokenName
+const config = require('../config')
+const expiresTime = config.expiresTime
 
 function getExpiresTime(num) { 
     let date1 = new Date()
@@ -12,52 +12,22 @@ function getExpiresTime(num) {
     return time
 }
 
-async function validUser({ access, ctx }, callback) {
-    if (!access) {
-        ctx.body = {
-            data: [],
-            success: true,
-            code: 401,
-            msg: "请先登陆",
-        }
-	} else {
-        await callback()
-    }
-}
-
-function validParams(params, ctx) {
-    let flag = true
+function verify(params, ctx = {}, next) {
+    let success = true
+    const message = []
     Object.keys(params).forEach(key => {
-        if (!params[key]) {
-            ctx.body = {
-				data: [],
-				success: false,
-				code: 200,
-				msg: `${key} can't be empty`,
-			}
-            flag = false
+        if (!params[key] && params[key] !== 0) {
+            success = false
+            message.push(`${key} doesn't exist`)
         }
     })
-    return flag
-}
 
-function validAED(affectedRows, ctx, msg = '') {
-    if (affectedRows > 0) {
-        ctx.body = {
-            data: [],
-            success: true,
-            code: 200,
-            msg: msg ? `${msg}成功` : 'success',
-        }
-    } else {
-        ctx.body = {
-            data: [],
-            success: false,
-            code: 200,
-            msg: msg ? `${msg}失败` : 'fail',
-        }
-    }
-    return affectedRows > 0
+    ctx.success = success
+    ctx.message = message.join(',')
+
+    if (!success && next) next()
+
+    return success
 }
 
 function setCookies(params, ctx) {
@@ -65,7 +35,7 @@ function setCookies(params, ctx) {
     const domain = origin ? ctx.request.header.origin.split(':')[1].slice(2) : ''
     const { uid, password } = params
     const token = createToken({ uid, password })
-    ctx.cookies.set(tokenName, token, {
+    ctx.cookies.set(`${config.cookiesPref}-token`, token, {
         domain,
         path: '/', // cookie写入的路径
         maxAge: 1000 * 60 * 60 * 1 * expiresTime,
@@ -73,7 +43,7 @@ function setCookies(params, ctx) {
         httpOnly: false,
         overwrite: true,
     })
-    ctx.cookies.set('uid', uid, {
+    ctx.cookies.set(`${config.cookiesPref}-uid`, uid, {
         domain,
         path: '/', // cookie写入的路径
         maxAge: 1000 * 60 * 60 * 1 * expiresTime,
@@ -85,8 +55,6 @@ function setCookies(params, ctx) {
 
 module.exports = {
     getExpiresTime,
-    validUser,
-    validParams,
-    validAED,
     setCookies,
+    verify,
 }
